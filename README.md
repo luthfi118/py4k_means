@@ -31,4 +31,4 @@ y = km.cluster(x,4,20)
 plt.scatter(y['x0'],y['x1'],c=y['label'],cmap='rainbow')
 plt.show()
 ```
-<img src="https://ibb.co/N61nXYN">
+![alt text](https://ibb.co/N61nXYN)
