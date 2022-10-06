@@ -8,6 +8,7 @@ class k_means:
         maxx=x.max()
         self.__centroid=np.array([np.random.uniform(minx,maxx,len(x[0])) for i in range(k)])
         self.__check=False
+
     def __distance(self,x,k):
         self.__cluster=[[] for i in range(k)]
         for i in range(len(x)):
@@ -16,6 +17,7 @@ class k_means:
                 dist.append(np.linalg.norm(self.__centroid[j]-x[i]))
             mindis=min(dist)
             self.__cluster[dist.index(mindis)].append(i)
+
     def __update(self,x):
         prev_centroid=self.__centroid.copy()
         clustered_data=[]
@@ -31,6 +33,7 @@ class k_means:
             temp[i]=np.linalg.norm(prev_centroid[i]-self.__centroid[i])
         if(temp.sum()==0):
             self.__check=True
+
     def __label(self,x):
         label=np.zeros(len(x))
         for i in range(len(x)):
@@ -40,9 +43,13 @@ class k_means:
                     label[i]=j
                 except:
                     pass
-        temp=pd.DataFrame(x,columns=['x'+str(i) for i in range(len(x[0]))])
-        temp['label']=label
-        return temp
+        #temp=pd.DataFrame(x,columns=['x'+str(i) for i in range(len(x[0]))])
+        #temp['label']=label
+        print(label)
+        label = label.reshape(len(label),1)
+        x = np.append(x,label,axis=1)
+        return x
+
     def cluster(self,x,k,max_iter=20):
         x=np.array(x)
         self.__init_centroid(x,k)
@@ -54,3 +61,23 @@ class k_means:
             if(i==max_iter):
                 break
         return self.__label(x)
+
+    def predict(self,x):
+        x = x.reshape(1,len(x))
+        for i in range(len(x)):
+            dist=[]
+            for j in range(len(self.__centroid)):
+                dist.append(np.linalg.norm(self.__centroid[j]-x[i]))
+            mindis=min(dist)
+            print(mindis)
+        return dist.index(mindis)
+
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+#x = [np.random.uniform(-5,5 ,2) for i in range(500)]
+x,_ = make_moons(n_samples=1000)
+km = k_means()
+y = km.cluster(x,2,20)
+
+plt.scatter(y[:,0],y[:,1],c=y[:,2],cmap='rainbow')
+plt.show()
